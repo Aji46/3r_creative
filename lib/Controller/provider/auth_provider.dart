@@ -44,14 +44,11 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Call your login API here
-      // For now, using dummy success response
       _token = 'dummy_token';
       _userId = 'dummy_user_id';
       _adminId = 'dummy_admin_id';
       _isAuthenticated = true;
 
-      // Save to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', _token!);
       await prefs.setString('userId', _userId!);

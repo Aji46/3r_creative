@@ -17,6 +17,16 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LoginProvider>(context, listen: false).setDeviceToken(
+        "f7OW_uHRSNKkYEi8JyTFHK:APA91bEbuovN97LQ6QIqwO8Aj85gIQ57m0Hm6Pm4V2M8kiiQ8efq77csFofJvdAganDTDyQlalqp2iIBJuA-X45J5aaqoU7Du9hm-5nEaryP8OSNhouCHLNq3R3YTGxFfP0SinCf0P"
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:r_creative/Controller/provider/Profile_provider.dart';
-import 'package:r_creative/contants/color.dart';
-import 'package:r_creative/view/auth/login_screen.dart';
-import 'package:r_creative/view/widgets/Coustom_AppBar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:r_creative/Controller/provider/auth_provider.dart';
+import 'package:r_creative/Controller/provider/Login_provider.dart';
+import 'package:r_creative/contants/color.dart';
+import 'package:r_creative/view/splash/splash_screen.dart';
+import 'package:r_creative/view/widgets/Coustom_AppBar.dart';
 
 class MoreScreen extends StatelessWidget {
   @override
@@ -186,20 +186,22 @@ class MoreScreen extends StatelessWidget {
                     MenuItemData(
                       icon: Icons.logout,
                       title: "Logout",
-                      onTap: () async {
-                        // Show confirmation dialog
-                        final shouldLogout = await showDialog<bool>(
+                      onTap: () {
+                        showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Logout'),
                             content: const Text('Are you sure you want to logout?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.pop(context, false),
+                                onPressed: () => Navigator.pop(context),
                                 child: const Text('Cancel'),
                               ),
                               TextButton(
-                                onPressed: () => Navigator.pop(context, true),
+                                onPressed: () {
+                                  Navigator.pop(context); // Close dialog
+                                  Provider.of<LoginProvider>(context, listen: false).logout(context);
+                                },
                                 child: const Text(
                                   'Logout',
                                   style: TextStyle(color: Colors.red),
@@ -208,18 +210,6 @@ class MoreScreen extends StatelessWidget {
                             ],
                           ),
                         );
-
-                        if (shouldLogout == true) {
-                          final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                          await authProvider.logout();
-
-                          if (context.mounted) {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => LoginScreen()),
-                              (route) => false,
-                            );
-                          }
-                        }
                       },
                       color: Colors.red,
                     ),

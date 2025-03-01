@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:r_creative/model/Login_model.dart';
+import 'package:r_creative/view/auth/login_screen.dart';
 import 'package:r_creative/view/home/Bottom_Nav_bar.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider extends ChangeNotifier {
   static const String API_BASE_URL = "https://api.task.aurify.ae/user/";
@@ -29,8 +30,7 @@ class LoginProvider extends ChangeNotifier {
 
   Future<void> login(BuildContext context, String contact, String password) async {
     if (_deviceToken == null) {
-      _errorMessage = "Device token not available";
-      notifyListeners();
+      _showSnackbar(context, "Device token not available", Colors.red);
       return;
     }
 
@@ -42,8 +42,8 @@ class LoginProvider extends ChangeNotifier {
       final response = await http.post(
         Uri.parse("${API_BASE_URL}login/$ADMIN_ID"),
         body: jsonEncode({
-          "contact": int.parse(contact)?? 0,
-          "password": password,
+          "contact": int.parse(contact),
+          "password": password.toString(),
           "token": _deviceToken
         }),
         headers: {
@@ -57,23 +57,72 @@ class LoginProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         _user = loginUserFromJson(response.body);
-        print("Login success ++++++++++++++++++++++++++");
+        
+        // Save user data to SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', response.body);
+        await prefs.setString('token', _user!.token);
+        await prefs.setString('admin_id', _user!.info.adminId);
+        await prefs.setBool('is_logged_in', true);
 
-        Navigator.pushReplacement(
+        _showSnackbar(context, "Login successful!", Colors.green);
+
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
+          (route) => false,
         );
-
       } else {
         Map<String, dynamic> errorData = json.decode(response.body);
         _errorMessage = errorData['message'] ?? "Invalid credentials";
+        _showSnackbar(context, _errorMessage!, Colors.red);
       }
     } catch (e) {
       _errorMessage = "Something went wrong! ${e.toString()}";
+      _showSnackbar(context, _errorMessage!, Colors.red);
       print("Login error: ${e.toString()}");
     }
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> logout(BuildContext context) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Clear all stored data
+      await prefs.clear();
+      
+      // Reset provider state
+      _user = null;
+      _deviceToken = null;
+      _errorMessage = null;
+      
+      // Navigate to login screen and remove all previous routes
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      print("Logout error: ${e.toString()}");
+    }
+    notifyListeners();
+  }
+
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
+  }
+
+  void _showSnackbar(BuildContext context, String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: TextStyle(color: Colors.white)),
+        backgroundColor: color,
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 }

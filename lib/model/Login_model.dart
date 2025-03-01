@@ -9,34 +9,78 @@ LoginUser loginUserFromJson(String str) => LoginUser.fromJson(json.decode(str));
 String loginUserToJson(LoginUser data) => json.encode(data.toJson());
 
 class LoginUser {
-    String message;
-    bool success;
-    String userId;
-    UserDetails userDetails;
-    UserSpotRate userSpotRate;
+    final String token;
+    final UserInfo info;
+    final bool status;
+    final String message;
 
     LoginUser({
+        required this.token,
+        required this.info,
+        required this.status,
         required this.message,
-        required this.success,
-        required this.userId,
-        required this.userDetails,
-        required this.userSpotRate,
     });
 
     factory LoginUser.fromJson(Map<String, dynamic> json) => LoginUser(
-        message: json["message"],
-        success: json["success"],
-        userId: json["userId"],
-        userDetails: UserDetails.fromJson(json["userDetails"]),
-        userSpotRate: UserSpotRate.fromJson(json["userSpotRate"]),
+        token: json["token"] ?? "",
+        info: UserInfo.fromJson(json["info"] ?? {}),
+        status: json["status"] ?? false,
+        message: json["message"] ?? "",
     );
 
     Map<String, dynamic> toJson() => {
+        "token": token,
+        "info": info.toJson(),
+        "status": status,
         "message": message,
-        "success": success,
-        "userId": userId,
-        "userDetails": userDetails.toJson(),
-        "userSpotRate": userSpotRate.toJson(),
+    };
+}
+
+class UserInfo {
+    final String adminId;
+    final String userName;
+    final String email;
+    final String companyName;
+    final String address;
+    final String contact;
+    final String whatsapp;
+    final String role;
+    final bool isActive;
+
+    UserInfo({
+        required this.adminId,
+        required this.userName,
+        required this.email,
+        required this.companyName,
+        required this.address,
+        required this.contact,
+        required this.whatsapp,
+        required this.role,
+        required this.isActive,
+    });
+
+    factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
+        adminId: json["admin_id"] ?? "",
+        userName: json["user_name"] ?? "",
+        email: json["email"] ?? "",
+        companyName: json["company_name"] ?? "",
+        address: json["address"] ?? "",
+        contact: json["contact"]?.toString() ?? "",
+        whatsapp: json["whatsapp"]?.toString() ?? "",
+        role: json["role"] ?? "",
+        isActive: json["is_active"] ?? false,
+    );
+
+    Map<String, dynamic> toJson() => {
+        "admin_id": adminId,
+        "user_name": userName,
+        "email": email,
+        "company_name": companyName,
+        "address": address,
+        "contact": contact,
+        "whatsapp": whatsapp,
+        "role": role,
+        "is_active": isActive,
     };
 }
 
