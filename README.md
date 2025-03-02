@@ -61,8 +61,6 @@ https://github.com/user-attachments/assets/b6479a51-ed90-4fb1-94a6-076fb923cc68
 - Ensure that the API endpoints are up and running.
 - Use the **Forgot Password** feature if you encounter login issues.
 
-## License
-This project is licensed under the MIT License.
 
 ## Contact
 For any queries, contact **ajilesh46@gmail.com**.
