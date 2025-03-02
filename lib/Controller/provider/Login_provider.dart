@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:r_creative/model/Login_model.dart';
 import 'package:r_creative/view/auth/login_screen.dart';
@@ -8,10 +9,10 @@ import 'package:r_creative/view/home/Bottom_Nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider extends ChangeNotifier {
-  static const String API_BASE_URL = "https://api.task.aurify.ae/user/";
-  static const String ADMIN_ID = "66e994239654078fd531dc2a";
-  static const String HEADER_KEY = "X-Secret-Key";
-  static const String HEADER_VALUE = "IfiuH/Ox6QKC3jP6ES6Y+aGYuGJEAOkbJb";
+  static String API_BASE_URL = dotenv.env['API_BASE_URL'] ?? "";
+  static String ADMIN_ID = dotenv.env['ADMIN_ID'] ?? "";
+  static String HEADER_KEY = dotenv.env['HEADER_KEY'] ?? "";
+  static String HEADER_VALUE = dotenv.env['HEADER_VALUE'] ?? "";
 
   String? _deviceToken;
 
@@ -57,8 +58,7 @@ class LoginProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         _user = loginUserFromJson(response.body);
-        
-        // Save user data to SharedPreferences
+
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('user_data', response.body);
         await prefs.setString('token', _user!.token);
@@ -91,15 +91,12 @@ class LoginProvider extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       
-      // Clear all stored data
       await prefs.clear();
       
-      // Reset provider state
       _user = null;
       _deviceToken = null;
       _errorMessage = null;
       
-      // Navigate to login screen and remove all previous routes
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),

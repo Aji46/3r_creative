@@ -2,16 +2,20 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:r_creative/model/Login_model.dart';
 import 'package:r_creative/view/auth/login_screen.dart';
 
 
 class ForgotProvider extends ChangeNotifier {
-  static const String API_BASE_URL = "https://api.task.aurify.ae/user/";
-  static const String ADMIN_ID = "66e994239654078fd531dc2a";
-  static const String HEADER_KEY = "X-Secret-Key";
-  static const String HEADER_VALUE = "IfiuH/Ox6QKC3jP6ES6Y+aGYuGJEAOkbJb";
+
+
+
+    static String API_BASE_URL = dotenv.env['API_BASE_URL'] ?? "";
+  static String ADMIN_ID = dotenv.env['ADMIN_ID'] ?? "";
+  static String HEADER_KEY = dotenv.env['HEADER_KEY'] ?? "";
+  static String HEADER_VALUE = dotenv.env['HEADER_VALUE'] ?? "";
 
   String? _deviceToken;
 
@@ -29,8 +33,8 @@ class ForgotProvider extends ChangeNotifier {
   LoginUser? get user => _user;
 
   final Dio _dio = Dio();
-  final String baseUrl = "https://api.task.aurify.ae";
-  final String secretKey = "IfiuH/Ox6QKC3jP6ES6Y+aGYuGJEAOkbJb";
+  final String baseUrl = dotenv.env['API_BASE_URL'] ?? "";
+  final String secretKey = dotenv.env['HEADER_VALUE'] ?? "";
 
   Future<bool> resetPassword({
     required String contact,

@@ -1,14 +1,16 @@
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:r_creative/model/profile.dart';
 
 
 class ProfileService  {
-      static const String API_BASE_URL = "https://api.task.aurify.ae/user/";
-  static const String ADMIN_ID = "66e994239654078fd531dc2a";
-  static const String HEADER_KEY = "X-Secret-Key";
-  static const String HEADER_VALUE = "IfiuH/Ox6QKC3jP6ES6Y+aGYuGJEAOkbJb";
+
+    static String API_BASE_URL = dotenv.env['API_BASE_URL'] ?? "";
+  static String ADMIN_ID = dotenv.env['ADMIN_ID'] ?? "";
+  static String HEADER_KEY = dotenv.env['HEADER_KEY'] ?? "";
+  static String HEADER_VALUE = dotenv.env['HEADER_VALUE'] ?? "";
   Future<GetProfile> fetchProfile() async {
     final  response = await http.get(Uri.parse("${API_BASE_URL}get-profile/$ADMIN_ID"),
        headers: {
